@@ -1136,6 +1136,8 @@ set( NACLLIST_MODULE
   ${LIB_DIR}/nacl/native_client/src/untrusted/nacl/imc_socketpair.c
 )
 
+file(GLOB_RECURSE LIBSRC_WEBP ${LIB_DIR}/libwebp/src/*.c ${LIB_DIR}/libwebp/*.h)
+
 # HACK: Force the compilation of EVERYTHING in C++
 file( GLOB_RECURSE EVERYTHING_C "src/engine/*.c" "src/gamelogic/*.c" )
 set_source_files_properties( ${EVERYTHING_C} PROPERTIES LANGUAGE CXX )
@@ -1186,7 +1188,7 @@ endif()
 
 # These variables are defined:
 # LIBS_BASE, LIBS_ENGINE, LIBS_BASECLIENT, LIBS_CLIENT
-# LIBSRC_BASE, LIBSRC_NACL, LIBSRC_ENGINE
+# LIBSRC_BASE, LIBSRC_NACL, LIBSRC_ENGINE, LIBSRC_WEBP
 
 # Base OS libs
 if( WIN32 )
@@ -1332,9 +1334,7 @@ endif()
 
 # WebP
 if( BUILD_CLIENT )
-  find_package( WebP REQUIRED )
-  include_directories( ${WEBP_INCLUDE_DIRS} )
-  set( LIBS_CLIENT ${LIBS_CLIENT} ${WEBP_LIBRARIES} )
+  include_directories( ${LIB_DIR}/libwebp/src/ )
 endif()
 
 # JPEG
@@ -1412,6 +1412,7 @@ endif()
 add_library( base-source-libs EXCLUDE_FROM_ALL ${LIBSRC_BASE} )
 add_library( nacl-source-libs EXCLUDE_FROM_ALL ${LIBSRC_NACL} )
 add_library( engine-source-libs EXCLUDE_FROM_ALL ${LIBSRC_ENGINE} )
+add_library( webp EXCLUDE_FROM_ALL ${LIBSRC_WEBP} )
 set_target_properties( base-source-libs nacl-source-libs engine-source-libs PROPERTIES POSITION_INDEPENDENT_CODE 1 )
 
 set( LIBS_BASE base-source-libs ${LIBS_BASE} )
@@ -1715,7 +1716,7 @@ if( BUILD_CLIENT )
   if( USE_SMP )
     set_property( TARGET client APPEND PROPERTY COMPILE_DEFINITIONS SMP )
   endif()
-  target_link_libraries( client ${LIBS_CLIENT} ${LIBS_CLIENTBASE} ${LIBS_ENGINE} ${LIBS_BASE} )
+  target_link_libraries( client ${LIBS_CLIENT} ${LIBS_CLIENTBASE} ${LIBS_ENGINE} ${LIBS_BASE} webp)
   set_property( TARGET client APPEND PROPERTY COMPILE_DEFINITIONS BUILD_ENGINE BUILD_CLIENT )
   if( USE_VOIP )
     # Set it here so the tty client doesn't need to depend on speex

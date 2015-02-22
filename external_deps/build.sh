@@ -21,7 +21,6 @@ SDL2_VERSION=2.0.3
 GLEW_VERSION=1.12.0
 PNG_VERSION=1.6.16
 JPEG_VERSION=1.4.0
-WEBP_VERSION=0.4.2
 FREETYPE_VERSION=2.5.5
 OPENAL_VERSION=1.16.0
 OGG_VERSION=1.3.2
@@ -252,15 +251,6 @@ build_jpeg() {
 	cd "libjpeg-turbo-${JPEG_VERSION}"
 	# JPEG doesn't set -O3 if CFLAGS is defined
 	CFLAGS="${CFLAGS:-} -O3" ./configure --host="${HOST}" --prefix="${PREFIX}" ${MSVC_SHARED[@]} --with-jpeg8
-	make
-	make install
-}
-
-# Build WebP
-build_webp() {
-	download "libwebp-${WEBP_VERSION}.tar.gz" "http://downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz" webp
-	cd "libwebp-${WEBP_VERSION}"
-	./configure --host="${HOST}" --prefix="${PREFIX}" ${MSVC_SHARED[@]}
 	make
 	make install
 }
@@ -644,16 +634,16 @@ if [ "${#}" -lt "2" ]; then
 	echo "usage: ${0} <platform> <package[s]...>"
 	echo "Script to build dependencies for platforms which do not provide them"
 	echo "Platforms: msvc32 msvc64 mingw32 mingw64 macosx32 macosx64 linux32 linux64"
-	echo "Packages: pkgconfig nasm zlib gmp nettle geoip curl sdl2 glew png jpeg webp freetype openal ogg vorbis speex theora opus opusfile naclsdk"
+	echo "Packages: pkgconfig nasm zlib gmp nettle geoip curl sdl2 glew png jpeg freetype openal ogg vorbis speex theora opus opusfile naclsdk"
 	echo "Virtual packages:"
 	echo "  install - create a stripped down version of the built packages that CMake can use"
 	echo "  package - create a zip/tarball of the dependencies so they can be distributed"
 	echo
 	echo "Packages requires for each platform:"
 	echo "Linux native compile: naclsdk (and possibly others depending on what packages your distribution provides)"
-	echo "Linux to Windows cross-compile: zlib gmp nettle geoip curl sdl2 glew png jpeg webp freetype openal ogg vorbis speex theora opus opusfile naclsdk"
-	echo "Native Windows compile: pkgconfig nasm zlib gmp nettle geoip curl sdl2 glew png jpeg webp freetype openal ogg vorbis speex theora opus opusfile naclsdk"
-	echo "Native Mac OS X compile: pkgconfig nasm gmp nettle geoip sdl2 glew png jpeg webp freetype openal ogg vorbis speex theora opus opusfile naclsdk"
+	echo "Linux to Windows cross-compile: zlib gmp nettle geoip curl sdl2 glew png jpeg freetype openal ogg vorbis speex theora opus opusfile naclsdk"
+	echo "Native Windows compile: pkgconfig nasm zlib gmp nettle geoip curl sdl2 glew png jpeg freetype openal ogg vorbis speex theora opus opusfile naclsdk"
+	echo "Native Mac OS X compile: pkgconfig nasm gmp nettle geoip sdl2 glew png jpeg freetype openal ogg vorbis speex theora opus opusfile naclsdk"
 	exit 1
 fi
 
